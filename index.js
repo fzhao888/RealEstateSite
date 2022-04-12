@@ -27,11 +27,11 @@ if (process.env.DATABASE_URL != null){
 else{
    connectionParams = {
    	user: 'team3_user',
-   	host: process.env.DATABASE_URL || 'localhost',
-  	 database: 'team3',
-  	 password: 'team3pass',
-  	 port: 5432
-	}
+   	host: 'localhost',
+  	database: 'team3',
+  	password: 'team3pass',
+  	port: 5432
+  }
 }
 
 console.log(connectionParams)
