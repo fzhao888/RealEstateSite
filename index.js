@@ -3,7 +3,11 @@ const app = express()
 const port = process.env.PORT || 3000
 
 app.get('/',(req,res) => {
-	res.send('Hello World!')
+        console.log('Accept: ' + req.get('Accept'))
+        
+	res.send('<h1>Hello World!</h1>')
+	
+	console.log('Content-Type: ' + res.get('Content-Type'))
 })
 
 app.listen(port, () => {
