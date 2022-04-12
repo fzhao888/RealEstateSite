@@ -67,7 +67,7 @@ app.post('/', (req, res) => {
 	
 	})
 })
-
+/**
 app.put('/', (req,res) => {
 	pool.query(`UPDATE property SET propertyType = '${req.body.propertytype}', price = '${req.body.price}',size = '${req.body.size}', num_bedroom = '${req.body.num_bedroom}', num_bathroom = '${req.body.num_bathroom}' WHERE propertyID = '{$req.body.id}' `, (err,result) => {
 		console.log(err, result)
@@ -85,6 +85,7 @@ app.delete('/', (req,res) => {
 		
 	})
 })
+* */
 	
 
 app.listen(port, () => {
