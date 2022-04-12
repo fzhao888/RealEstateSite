@@ -43,13 +43,13 @@ app.get('/',(req,res) => {
         pool.query('SELECT VERSION()', (err,version_results) => {
             console.log(err, version_results.rows)
             
-         pool.query('SELECT * FROM team_members', (err,team_members_results) => {
-            console.log(err, team_members_results)
+         pool.query('SELECT * FROM property', (err,property_results) => {
+            console.log(err, property_results)
          
             res.render('index', { 
-                      teamNumber: 1,
+                      teamNumber: 3,
  		      databaseVersion: version_results.rows[0].version,
-		      teamMembers: team_members_results.rows
+		      properties: property_results.rows
 			})
           
            console.log('Content-Type: ' + res.get('Content-Type'))
@@ -58,7 +58,7 @@ app.get('/',(req,res) => {
 })
 
 app.post('/', (req, res) => {
-	pool.query(`INSERT INTO team_members (first_name, last_name) VALUES ('${req.body.first_name}', '${req.body.last_name}')` , (err, result) => {
+	pool.query(`INSERT INTO property (propertyType, price, size, num_bedroom, num_bathroom) VALUES ('${req.body.propertyType}', '${req.body.price}','${req.body.size}','${req.body.num_bedroom}','${req.body.num_bathroom}')` , (err, result) => {
 
 	console.log(err, result)
 
