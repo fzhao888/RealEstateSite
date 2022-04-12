@@ -57,8 +57,9 @@ app.get('/',(req,res) => {
         })
 })
 
+
 app.post('/', (req, res) => {
-	pool.query(`INSERT INTO property (propertyType, price, size, num_bedroom, num_bathroom) VALUES ('${req.body.propertyType}', '${req.body.price}','${req.body.size}','${req.body.num_bedroom}','${req.body.num_bathroom}')` , (err, result) => {
+	pool.query(`INSERT INTO property (propertyType, price, size, num_bedroom, num_bathroom) VALUES ('${req.body.propertytype}', '${req.body.price}','${req.body.size}','${req.body.num_bedroom}','${req.body.num_bathroom}')` , (err, result) => {
 
 	console.log(err, result)
 
@@ -66,6 +67,25 @@ app.post('/', (req, res) => {
 	
 	})
 })
+
+app.put('/', (req,res) => {
+	pool.query(`UPDATE property SET propertyType = '${req.body.propertytype}', price = '${req.body.price}',size = '${req.body.size}', num_bedroom = '${req.body.num_bedroom}', num_bathroom = '${req.body.num_bathroom}' WHERE propertyID = '{$req.body.id}' `, (err,result) => {
+		console.log(err, result)
+
+	res.redirect('/')
+		
+	})
+})
+
+app.delete('/', (req,res) => {
+	pool.query(`DELETE FROM property WHERE propertyID = '{$req.body.id}')`, (err,result) => {
+		console.log(err, result)
+
+	res.redirect('/')
+		
+	})
+})
+	
 
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`)

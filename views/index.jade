@@ -12,7 +12,7 @@ body
    form(name="add-team-member", method="post")
        div.input
            span.label Property Type
-           input(type="text", name="propertyType")
+           input(type="text", name="propertytype")
        
        div.input
            span.label Price
@@ -32,6 +32,8 @@ body
 
        div.actions
            input(type="submit", value="add")   
+           input(type="submit", value="delete")
+           input(type="submit", value="update")
 
    br
 
@@ -48,7 +50,7 @@ body
            
             each property in properties
                 tr 
-                   td #{property.propertyType}
+                   td #{property.propertytype}
                    td #{property.price}
                    td #{property.size}
                    td #{property.num_bedroom}
