@@ -20,7 +20,7 @@ var connectionParams =  null;
 if (process.env.DATABASE_URL != null){
     connectionParams = {
 	connectionString: process.env.DATABASE_URL,
-	ssl: { rejectedUnauthorized: false }
+	ssl: { rejectUnauthorized: false }
     }
 }
 
