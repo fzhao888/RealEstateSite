@@ -1,0 +1,59 @@
+<html>
+	<title> Update </title>
+	
+	<h2>Update Property</h2>
+			<form name="update-property" method="post"> 
+			
+			<div class="input"><span class="label">Property Type</span>
+				<input type="text" name="propertytype">
+			</div>
+			
+			<div class="input"><span class="label">Price</span>
+				<input type="text" name="price">
+			</div>
+			
+			<div class="input"><span class="label">Size</span>
+				<input type="text" name="size">
+			</div>
+			
+			<div class="input"><span class="label">Number of Bedroom</span>
+				<input type="text" name="num_bedroom">
+			</div>
+			
+			<div class="input"><span class="label">Number of Bathroom</span>
+				<input type="text" name="num_bathroom">
+			</div>
+			
+			<div class="input"><span class="label">Address ID</span>
+				<input type="text" name="addressID">
+			</div>
+			
+			<div class="actions"> 
+				<input type="submit" value="update">
+			</div>
+			
+			
+	<table>
+		<thead>
+			<tr>
+				<td> Type </td>
+                <td> Price </td>
+                <td> Size (sq ft) </td>
+                <td> Number of Bedroom </td>
+                <td> Number of Bathroom </td>
+           </tr>
+        <tbody>
+           
+            each property in properties
+                <tr> 
+                   <td> #{property.propertytype} </td>
+                   <td> #{property.price} </td>
+                   <td> #{property.size} </td>
+                   <td> #{property.num_bedroom} </td>
+                   <td> #{property.num_bathroom </td>
+                 </tr>
+         </tbody> 
+        </thead>
+  </table>
+</html>
+

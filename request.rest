@@ -1,0 +1,9 @@
+GET https://csc394-team3.herokuapp.com/users
+
+POST https://csc394-team3.herokuapp.com/users
+Content-Type: application/json
+
+{
+	"name": "team3",
+	"password": "team3pass"
+}
