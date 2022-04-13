@@ -54,23 +54,43 @@ app.get('/',(req,res) => {
           
            console.log('Content-Type: ' + res.get('Content-Type'))
 		})
-        })
+       })
 })
 
 
-app.post('/', (req, res) => {
-	pool.query(`INSERT INTO property (propertyType, price, size, num_bedroom, num_bathroom) VALUES ('${req.body.propertytype}', '${req.body.price}','${req.body.size}','${req.body.num_bedroom}','${req.body.num_bathroom}')` , (err, result) => {
-
+app.post('/', (req, res) => {  
+	if(req.body.action && req.body.action == 'add'){
+	pool.query(`INSERT INTO property (propertyType, price, size, num_bedroom, num_bathroom,addressID) VALUES ('${req.body.propertytype}', '${req.body.price}','${req.body.size}','${req.body.num_bedroom}','${req.body.num_bathroom}','${req.body.addressID}')` , (err, result) => {
 	console.log(err, result)
 
 	res.redirect('/')
 	
 	})
+	}
+	if(req.body.action && req.body.action == 'update'){
+		//pool.query(`DELETE FROM property WHERE addressID = '{$req.body.addressId}')`, (err,result) => {
+	pool.query(`UPDATE property SET propertyType = '${req.body.propertytype}' WHERE addressID = '${req.body.addressID}'`, (err,result) => {
+	console.log(err, result)
+
+	res.redirect('/')
+		
+	})
+}
+
+if(req.body.action && req.body.action == 'delete'){
+		//pool.query(`DELETE FROM property WHERE addressID = '{$req.body.addressId}')`, (err,result) => {
+	pool.query(`DELETE FROM property WHERE addressID = '{$req.body.addressID}'`, (err,result) => {
+	console.log(err, result)
+
+	res.redirect('/')
+		
+	})
+}
 })
-/**
-app.put('/', (req,res) => {
-	pool.query(`UPDATE property SET propertyType = '${req.body.propertytype}', price = '${req.body.price}',size = '${req.body.size}', num_bedroom = '${req.body.num_bedroom}', num_bathroom = '${req.body.num_bathroom}' WHERE propertyID = '{$req.body.id}' `, (err,result) => {
-		console.log(err, result)
+
+app.put('/', (req,res) => {  
+	pool.query(`UPDATE property SET propertyType = '${req.body.propertytype}' WHERE addressID = '${req.body.addressID}'`, (err,result) => {
+	console.log(err, result)
 
 	res.redirect('/')
 		
@@ -78,14 +98,14 @@ app.put('/', (req,res) => {
 })
 
 app.delete('/', (req,res) => {
-	pool.query(`DELETE FROM property WHERE propertyID = '{$req.body.id}')`, (err,result) => {
-		console.log(err, result)
+	pool.query(`DELETE FROM property WHERE addressID = '{$req.body.addressID}'`, (err,result) => {
+	console.log(err, result)
 
 	res.redirect('/')
 		
 	})
 })
-* */
+
 	
 
 app.listen(port, () => {
