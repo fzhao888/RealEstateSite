@@ -8,7 +8,9 @@ app.set("view engine", "jade")
 
 //for parsing application/json
 app.use(bodyParser.json());
+app.use(express.json())
 
+const users = []
 //for parsing application/xwww-
 app.use(bodyParser.urlencoded({ extended:true }));
 //form-urlencoded
@@ -58,6 +60,11 @@ app.get('/',(req,res) => {
 })
 
 
+app.get('/users', (req, res) => {
+	res.json(users)
+})
+
+
 app.post('/', (req, res) => {  
 	if(req.body.action && req.body.action == 'add'){
 	pool.query(`INSERT INTO property (propertyType, price, size, num_bedroom, num_bathroom,addressID) VALUES ('${req.body.propertytype}', '${req.body.price}','${req.body.size}','${req.body.num_bedroom}','${req.body.num_bathroom}','${req.body.addressID}')` , (err, result) => {
@@ -86,6 +93,19 @@ if(req.body.action && req.body.action == 'delete'){
 		
 	})
 }
+})
+
+app.post('/users', (req, res) => {
+	const user = { name: req.body.name, password: req.body.password }
+	users.push(user)
+	res.status(201).send()
+})
+
+app.post('/users/login',(req,res) => {
+	const user = users.find(user => user.name = req.body.name)
+	if (user == null) {
+		return res.status(400).send('Cannot find user')
+	}
 })
 
 app.put('/', (req,res) => {  
