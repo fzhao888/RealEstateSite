@@ -37,38 +37,8 @@ body
        div.actions
            input(type="submit",name="action", value="add")
            input(type="submit",name="action", value="delete")
-           input(type="submit",name="action", value="update")     
-            
-   h2 Update Property
-    
-   form(name="update-property", method="put") 
-       div.input
-           span.label Property Type
-           input(type="text", name="propertytype")
-       
-       div.input
-           span.label Price
-           input(type="text", name="price")
-
-       div.input
-           span.label Size
-           input(type="text", name="size")
-       
-       div.input
-           span.label Number of Bedroom
-           input(type="text", name="num_bedroom")
-
-       div.input
-           span.label Number of Bathroom
-           input(type="text", name="num_bathroom")
-           
-       div.input
-           span.label Address ID
-           input(type="text", name="addressID")
-
-       div.actions
-           input(type="submit", value="update")    
-           
+           input(type="submit",name="action", value="update")  
+        
    br
    
    table
@@ -79,6 +49,7 @@ body
                 td Size (sq ft)
                 td Number of Bedroom
                 td Number of Bathroom 
+                td Address ID
         tbody
            
             each property in properties
@@ -88,3 +59,4 @@ body
                    td #{property.size}
                    td #{property.num_bedroom}
                    td #{property.num_bathroom} 
+                   td #{property.addressID}
