@@ -28,7 +28,7 @@ if (process.env.DATABASE_URL != null){
     }
 }
 
-else{
+else{ 
    connectionParams = {
    	user: 'team3_user',
    	host: 'localhost',
