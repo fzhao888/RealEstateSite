@@ -20,6 +20,8 @@
   "homepage": "https://github.com/hdjokic/Team3#readme",
   "dependencies": {
     "express": "^4.17.3",
+    "express-basic-auth": "^1.2.1",
+    "index.js": "^0.0.3",
     "jade": "^1.11.0",
     "pg": "^8.7.3"
   },

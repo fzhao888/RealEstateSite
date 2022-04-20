@@ -11,8 +11,12 @@ app.use(bodyParser.json());
 
 //for parsing application/xwww-
 app.use(bodyParser.urlencoded({ extended:true }));
-//form-urlencoded
+//form-urlencoded 
+const basicAuth = require('express-basic-auth')
 
+app.use(basicAuth({
+	users: { 'admin': 'supersecret' }
+}))
 //Database
 const Pool = require('pg').Pool
 
@@ -37,7 +41,8 @@ else{
 console.log(connectionParams)
 const pool = new Pool(connectionParams)
 
-app.get('/',(req,res) => {
+app.get('/',(req,res) => { 
+	
         console.log('Accept: ' + req.get('Accept'))
 
         pool.query('SELECT VERSION()', (err,version_results) => {
@@ -86,20 +91,16 @@ app.post('/', (req, res) => {
 	}
 })
 /**
-
 app.put('/', (req,res) => {  
 	pool.query(`UPDATE property SET propertyType = '${req.body.propertytype}' WHERE addressID = '${req.body.addressID}'`, (err,result) => {
 	console.log(err, result)
-
 	res.redirect('/')
 		
 	})
 })
-
 app.delete('/', (req,res) => {
 	pool.query(`DELETE FROM property WHERE addressID = '${req.body.addressID}'`, (err,result) => { 
 	console.log(err, result)
-
 	res.redirect('/')
 		
 	})
