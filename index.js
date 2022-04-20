@@ -12,11 +12,14 @@ app.use(bodyParser.json());
 //for parsing application/xwww-
 app.use(bodyParser.urlencoded({ extended:true }));
 //form-urlencoded 
-const basicAuth = require('express-basic-auth')
 
+
+const basicAuth = require('express-basic-auth')
 app.use(basicAuth({
-	users: { 'admin': 'supersecret' }
+	users: { 'team3': 'team3pass' },
+	challenge: true
 }))
+
 //Database
 const Pool = require('pg').Pool
 
