@@ -1,60 +1,14 @@
 doctype html
-
+   
 html
-   head
-   title Willow: Find Your Perfect Home Today
-body
-   h1 Willow 
-   p Find your perfect home today
+	head 
+	title Login
+	
+	body 
+		h1 Please Choose
+	
+		form(action="/login", method="post") 
+			div.actions
+				input(type = "submit", name = "action", value = "customer")
+				input(type = "submit", name = "action", value = "realtor")
 
-   h2 Create Property 
-   
-   form(name="add-property", method="post") 
-       div.input
-           span.label Property Type
-           input(type="text", name="propertytype")
-       
-       div.input
-           span.label Price
-           input(type="text", name="price")
-
-       div.input
-           span.label Size
-           input(type="text", name="size")
-       
-       div.input
-           span.label Number of Bedroom
-           input(type="text", name="num_bedroom")
-
-       div.input
-           span.label Number of Bathroom
-           input(type="text", name="num_bathroom")
-           
-       div.input
-           span.label Address ID
-           input(type="text", name="addressID")
-
-       div.actions
-           input(type="submit",name="action", value="add")
-           input(type="submit",name="action", value="delete")
-           input(type="submit",name="action", value="update")  
-        
-   br
-   
-   table
-       thead
-           tr
-                td Type
-                td Price
-                td Size (sq ft)
-                td Number of Bedroom
-                td Number of Bathroom 
-        tbody
-           
-            each property in properties
-                tr 
-                   td #{property.propertytype}
-                   td #{property.price}
-                   td #{property.size}
-                   td #{property.num_bedroom}
-                   td #{property.num_bathroom}  
