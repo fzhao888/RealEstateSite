@@ -97,7 +97,7 @@ router.get('/insert', (req,res) => {
 })
 
 router.get('/register', (req,res) => { 
-	res.render('register')
+	res.render('/register')
 }) 
 
 router.post('/register', (req,res) => {
@@ -157,8 +157,31 @@ router.post('/invalid', (req,res) => {
 	res.redirect('/')
 	
 })
+ 
+router.get('/login' , (req,res) => {
+	res.render('index')
+	
+})
 
-router.post('/login', (req,res) => { 
+router.post('/login' , (req,res) => {
+	if(req.body.action && req.body.action == 'customer') {
+		res.redirect('/customerlogin')
+	}	
+	if(req.body.action && req.body.action == 'realtor') {
+		res.redirect('/realtorlogin')
+	}	
+	 
+})
+
+
+router.get('/customerlogin', (req,res) => {
+	res.render('customerlogin')
+	
+})
+
+
+
+router.post('/customerlogin', (req,res) => { 
 
 //check user name and password with db
 	if(req.body.action && req.body.action == 'login'){
@@ -214,7 +237,89 @@ pool.query(`CREATE TABLE IF NOT EXISTS customer (
 					  );` , (err,result) => {
 				console.log(err,result)
 				});
-			res.redirect('/insert'); 
+			res.redirect('/customerpanel'); 
+						   
+	
+	}else{
+	
+		res.redirect('/invalid');
+		
+		console.log(req)
+	
+		}
+		
+	} 
+	
+	if(req.body.action && req.body.action == 'register'){
+		res.redirect('/register');
+	}
+	
+ })
+
+router.get('/realtorlogin', (req,res) => {
+	res.render('realtorlogin')
+	
+})
+
+
+
+router.post('/realtorlogin', (req,res) => { 
+
+//check user name and password with db
+	if(req.body.action && req.body.action == 'login'){
+		if((req.body.username === '1') && (req.body.password ==='1')){   
+			current_username = req.body.username;
+			//create tables 
+						
+pool.query(`CREATE TABLE IF NOT EXISTS address ( addressID SERIAL PRIMARY KEY,
+					 street VARCHAR(50),
+					 city VARCHAR(30),
+					 state VARCHAR(30),
+					  zip NUMERIC(6)
+					 );`, (err,result) => {
+				console.log(err,result)
+				});
+				
+				
+
+
+pool.query(`CREATE TABLE IF NOT EXISTS realtor (
+					realtorID INTEGER PRIMARY KEY, 
+					 user_name VARCHAR(50),
+					 password VARCHAR(50),
+					 agency VARCHAR(30),
+					 first_name VARCHAR(30),
+					 last_name VARCHAR(30),
+					 phone_number VARCHAR(20),
+					 email VARCHAR(30)
+					 );`, (err,result) => {
+				console.log(err,result)
+				});
+					 
+
+pool.query(`CREATE TABLE IF NOT EXISTS property (propertyID SERIAL PRIMARY KEY, 
+					   propertyType VARCHAR(30),
+					   price	 NUMERIC(30,2) CHECK( price > 0),
+					   size INTEGER,
+					   num_bedroom INTEGER CHECK (num_bedroom > 0),
+					   num_bathroom INTEGER CHECK (num_bathroom > 0),
+					   realtorID INTEGER REFERENCES realtor(realtorID),
+					   addressID INTEGER REFERENCES address(addressID)
+					  );`, (err,result) => {
+				console.log(err,result)
+				});
+					 
+pool.query(`CREATE TABLE IF NOT EXISTS customer (
+					 user_name VARCHAR(50) PRIMARY KEY,
+					 password VARCHAR(50),
+					 first_name VARCHAR(30),
+					 last_name VARCHAR(30),
+					 phone_number VARCHAR(20),
+					 email VARCHAR(30) 
+					  );` , (err,result) => {
+				console.log(err,result)
+				});
+			res.redirect('/realtorpanel'); 
 						   
 	
 	}else{
@@ -279,10 +384,176 @@ router.post('/users/login',(req,res) => {
 
  
 router.get('/realtorpanel', (req,res) => { 
-            res.render('realtorpanel', {name: current_username});
+	
+	pool.query(`SELECT * FROM realtor WHERE user_name = '${current_username}'`, (err,realtor_results) => {
+            console.log(err, realtor_results)
+         
+            res.render('realtorpanel', { 
+                     name: current_username,
+                     realtors: realtor_results.rows
+			});
+			
+	
+	}); 
 			 
 	 
  })
+ 
+ router.post('/realtorpanel', (req,res) => {
+	 
+	if(req.body.action && req.body.action == 'crud'){
+		res.redirect('/insert')
+	}
+	
+	if(req.body.action && req.body.action == 'change password'){
+		res.redirect('/realtorchangepassword')
+			
+	}   
+	
+	if(req.body.action && req.body.action == 'change password'){
+		res.redirect('/realtorchangephoneno')
+			
+	} 
+	
+	
+	
+	if(req.body.action && req.body.action == 'change email'){
+		res.redirect('/realtorchangeemail')
+			
+	} 
+	
+		
+	if(req.body.action && req.body.action == 'change agency'){
+		res.redirect('/realtorchangeagency')
+			
+	} 
+	
+	if(req.body.action && req.body.action == 'change phone number'){
+		res.redirect('/realtorchangephoneno')
+			
+	} 
+	 
+ })
+
+router.get('/realtorchangeagency', (req,res) => {
+	res.render('realtorchangeagency')
+
+})
+
+router.post('/realtorchangeagency' , (req,res) => {
+	pool.query(`UPDATE realtor SET agency = '${req.body.agency}' WHERE user_name = '${current_username}' `  )
+	res.redirect('/realtorpanel')
+	 
+})
+
+router.get('/realtorchangepassword' , (req,res) => {
+	res.render('realtorchangepassword')
+})
+
+router.post('/realtorchangepassword', (req,res) => {
+	pool.query(`UPDATE realtor SET password = '${req.body.password}' WHERE user_name = '${current_username}' `  )
+	res.redirect('/realtorpanel')
+	
+})
+
+
+router.get('/realtorchangeemail', (req,res) => {
+	res.render('realtorchangeemail')
+
+})
+
+router.post('/realtorchangeemail' , (req,res) => {
+	pool.query(`UPDATE realtor SET email = '${req.body.email}' WHERE user_name = '${current_username}' `  )
+	res.redirect('/realtorpanel')
+	 
+})
+
+router.get('/realtorchangephoneno' , (req,res) => {
+	res.render('realtorchangephoneno')
+})
+
+router.post('/realtorchangephoneno', (req,res) => {
+	pool.query(`UPDATE realtor SET phone_number = '${req.body.phoneno}' WHERE user_name = '${current_username}' `  )
+	res.redirect('/realtorpanel')
+	
+})
+
+
+
+router.get('/customerpanel', (req,res) => { 
+	
+	pool.query(`SELECT * FROM customer WHERE user_name = '${current_username}'`, (err,customer_results) => {
+            console.log(err, customer_results)
+         
+            res.render('customerpanel', { 
+                     name: current_username,
+                      customers: customer_results.rows
+			});
+			
+	
+	}); 
+			 
+	 
+ })
+ 
+ router.post('/customerpanel', (req,res) => {
+	  
+	if(req.body.action && req.body.action == 'change password'){
+		res.redirect('/customerchangepassword')
+			
+	}   
+	
+	if(req.body.action && req.body.action == 'change password'){
+		res.redirect('/customerchangephoneno')
+			
+	} 
+	
+	
+	
+	if(req.body.action && req.body.action == 'change email'){
+		res.redirect('/customerchangeemail')
+			
+	} 
+	 
+	
+	if(req.body.action && req.body.action == 'change phone number'){
+		res.redirect('/customerchangephoneno')
+			
+	} 
+	 
+ }) 
+
+router.get('/customerchangepassword' , (req,res) => {
+	res.render('customerchangepassword')
+})
+
+router.post('/customerchangepassword', (req,res) => {
+	pool.query(`UPDATE customer SET password = '${req.body.password}' WHERE user_name = '${current_username}' `  )
+	res.redirect('/customerpanel')
+	
+})
+
+
+router.get('/customerchangeemail', (req,res) => {
+	res.render('customerchangeemail')
+
+})
+
+router.post('/customerchangeemail' , (req,res) => {
+	pool.query(`UPDATE customer SET email = '${req.body.email}' WHERE user_name = '${current_username}' `  )
+	res.redirect('/customerpanel')
+	 
+})
+
+router.get('/customerchangephoneno' , (req,res) => {
+	res.render('customerchangephoneno')
+})
+
+router.post('/customerchangephoneno', (req,res) => {
+	pool.query(`UPDATE customer SET phone_number = '${req.body.phoneno}' WHERE user_name = '${current_username}' `  )
+	res.redirect('/customerpanel')
+	
+})
 
 app.use('/',router);
 app.listen(port, () => {

@@ -5,18 +5,10 @@ html
 	title Login
 	
 	body 
-		h1 Please enter login info
+		h1 Please Choose
 	
-		form(action="/login", method="post")
-			div.input
-				span.label User Name
-				input(type="text",name="username")
-			
-			div.input
-				span.label Password
-				input(type = "password", name = "password")
-
+		form(action="/login", method="post") 
 			div.actions
-				input(type = "submit", name = "action", value = "login")
-				input(type = "submit", name = "action", value = "register")
+				input(type = "submit", name = "action", value = "customer")
+				input(type = "submit", name = "action", value = "realtor")
 

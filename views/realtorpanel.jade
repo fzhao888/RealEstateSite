@@ -12,3 +12,24 @@ html
 				input(type = "submit", name = "action" , value = "change phone number")
 				input(type = "submit", name = "action" , value = "change email")
 				input(type = "submit", name = "action" , value = "change agency")
+	br
+	
+	table
+		thead
+			tr
+				td Realtor ID
+				td First Name
+				td Last Name
+				td Agency
+				td Phone Number
+				td Email 
+		tbody 
+			each realtor in realtors
+				tr 
+					td #{realtor.realtorID}
+					td #{realtor.first_name}
+					td #{realtor.last_name}
+					td #{realtor.agency}
+					td #{realtor.phone_number}
+					td #{realtor.email}  
+
