@@ -225,7 +225,7 @@ router.post('/realtorlogin', (req,res) => {
 	if(req.body.action && req.body.action == 'login'){
 		   
 			current_username = req.body.username;
-			 pool.query(`SELECT * FROM REALTOR WHERE user_name = '${req.body.username}'`, (err,result) => {
+			 pool.query(`SELECT * FROM realtor WHERE user_name = '${req.body.username}'`, (err,result) => {
 				console.log(err,result)
 				result.rows[0] 
 				
@@ -233,7 +233,7 @@ router.post('/realtorlogin', (req,res) => {
 					var password = result.rows[0].password
 					
 					if(req.body.password == password){
-						res.redirect('/relatorpanel')
+						res.redirect('/realtorpanel')
 					}else{
 						 res.redirect('/invalid') 
 						 console.log(req)
@@ -298,19 +298,16 @@ router.post('/users/login',(req,res) => {
 })
 
  
-router.get('/realtorpanel', (req,res) => { 
+router.get('/realtorpanel', (req,res) => {
 	
 	pool.query(`SELECT * FROM realtor WHERE user_name = '${current_username}'`, (err,realtor_results) => {
             console.log(err, realtor_results)
          
-            res.render('realtorpanel', { 
+             res.render('realtorpanel', { 
                      name: current_username,
-                     realtors: realtor_results.rows
+                      realtor: realtor_results.rows[0] 
 			});
-			
-	
-	}); 
-			 
+	});   
 	 
  })
  
@@ -402,7 +399,7 @@ router.get('/customerpanel', (req,res) => {
          
             res.render('customerpanel', { 
                      name: current_username,
-                      customers: customer_results.rows
+                      customer: customer_results.rows[0] 
 			});
 			
 	
