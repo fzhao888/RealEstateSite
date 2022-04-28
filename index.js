@@ -197,70 +197,26 @@ router.post('/customerlogin', (req,res) => {
 
 //check user name and password with db
 	if(req.body.action && req.body.action == 'login'){
-		if((req.body.username === '2') && (req.body.password ==='2')){   
-			current_username = req.body.username;
-			//create tables 
+ 		current_username = req.body.username;
+			 pool.query(`SELECT * FROM CUSTOMER WHERE user_name = '${req.body.username}'`, (err,result) => {
+				console.log(err,result)
+				result.rows[0] 
+				
+				if(result.rows.length > 0){
+					var password = result.rows[0].password
+					
+					if(req.body.password == password){
+						res.redirect('/customerpanel')
+					}else{
 						
-pool.query(`CREATE TABLE IF NOT EXISTS address ( addressID SERIAL PRIMARY KEY,
-					 street VARCHAR(50),
-					 city VARCHAR(30),
-					 state VARCHAR(30),
-					  zip NUMERIC(6)
-					 );`, (err,result) => {
-				console.log(err,result)
-				});
-				
-				
-
-
-pool.query(`CREATE TABLE IF NOT EXISTS realtor (
-					realtorID INTEGER PRIMARY KEY, 
-					 user_name VARCHAR(50),
-					 password VARCHAR(50),
-					 agency VARCHAR(30),
-					 first_name VARCHAR(30),
-					 last_name VARCHAR(30),
-					 phone_number VARCHAR(20),
-					 email VARCHAR(30)
-					 );`, (err,result) => {
-				console.log(err,result)
-				});
-					 
-
-pool.query(`CREATE TABLE IF NOT EXISTS property (propertyID SERIAL PRIMARY KEY, 
-					   propertyType VARCHAR(30),
-					   price	 NUMERIC(30,2) CHECK( price > 0),
-					   size INTEGER,
-					   num_bedroom INTEGER CHECK (num_bedroom > 0),
-					   num_bathroom INTEGER CHECK (num_bathroom > 0),
-					   realtorID INTEGER REFERENCES realtor(realtorID),
-					   addressID INTEGER REFERENCES address(addressID)
-					  );`, (err,result) => {
-				console.log(err,result)
-				});
-					 
-pool.query(`CREATE TABLE IF NOT EXISTS customer (
-					 user_name VARCHAR(50) PRIMARY KEY,
-					 password VARCHAR(50),
-					 first_name VARCHAR(30),
-					 last_name VARCHAR(30),
-					 phone_number VARCHAR(20),
-					 email VARCHAR(30) 
-					  );` , (err,result) => {
-				console.log(err,result)
-				});
-			res.redirect('/customerpanel'); 
-						   
-	
-	}else{
-	
-		res.redirect('/invalid');
-		
-		console.log(req)
-	
-		}
-		
-	} 
+						res.redirect('/invalid') 
+						console.log(req)
+				}
+			}
+				}); 
+			}
+	 
+		 
 	
 	if(req.body.action && req.body.action == 'register'){
 		res.redirect('/register');
@@ -274,81 +230,39 @@ router.get('/realtorlogin', (req,res) => {
 })
 
 
-
 router.post('/realtorlogin', (req,res) => { 
 
 //check user name and password with db
 	if(req.body.action && req.body.action == 'login'){
-		if((req.body.username === '1') && (req.body.password ==='1')){   
+		   
 			current_username = req.body.username;
-			//create tables 
-						
-pool.query(`CREATE TABLE IF NOT EXISTS address ( addressID SERIAL PRIMARY KEY,
-					 street VARCHAR(50),
-					 city VARCHAR(30),
-					 state VARCHAR(30),
-					  zip NUMERIC(6)
-					 );`, (err,result) => {
+			 pool.query(`SELECT * FROM realtor WHERE user_name = '${req.body.username}'`, (err,result) => {
 				console.log(err,result)
-				});
+				result.rows[0] 
 				
+				if(result.rows.length > 0){
+					var password = result.rows[0].password
+					
+					if(req.body.password == password){
+						res.redirect('/realtorpanel')
+					}else{
+						 res.redirect('/invalid') 
+						 console.log(req)
+					}
+				}
 				
-
-
-pool.query(`CREATE TABLE IF NOT EXISTS realtor (
-					realtorID INTEGER PRIMARY KEY, 
-					 user_name VARCHAR(50),
-					 password VARCHAR(50),
-					 agency VARCHAR(30),
-					 first_name VARCHAR(30),
-					 last_name VARCHAR(30),
-					 phone_number VARCHAR(20),
-					 email VARCHAR(30)
-					 );`, (err,result) => {
-				console.log(err,result)
-				});
-					 
-
-pool.query(`CREATE TABLE IF NOT EXISTS property (propertyID SERIAL PRIMARY KEY, 
-					   propertyType VARCHAR(30),
-					   price	 NUMERIC(30,2) CHECK( price > 0),
-					   size INTEGER,
-					   num_bedroom INTEGER CHECK (num_bedroom > 0),
-					   num_bathroom INTEGER CHECK (num_bathroom > 0),
-					   realtorID INTEGER REFERENCES realtor(realtorID),
-					   addressID INTEGER REFERENCES address(addressID)
-					  );`, (err,result) => {
-				console.log(err,result)
-				});
-					 
-pool.query(`CREATE TABLE IF NOT EXISTS customer (
-					 user_name VARCHAR(50) PRIMARY KEY,
-					 password VARCHAR(50),
-					 first_name VARCHAR(30),
-					 last_name VARCHAR(30),
-					 phone_number VARCHAR(20),
-					 email VARCHAR(30) 
-					  );` , (err,result) => {
-				console.log(err,result)
-				});
-			res.redirect('/realtorpanel'); 
-						   
-	
-	}else{
-	
-		res.redirect('/invalid');
-		
-		console.log(req)
-	
-		}
-		
-	} 
+			})
+				
+	}
+	 
+		 
 	
 	if(req.body.action && req.body.action == 'register'){
 		res.redirect('/register');
 	}
 	
  })
+
 
 
 
@@ -395,19 +309,16 @@ router.post('/users/login',(req,res) => {
 })
 
  
-router.get('/realtorpanel', (req,res) => { 
+router.get('/realtorpanel', (req,res) => {
 	
 	pool.query(`SELECT * FROM realtor WHERE user_name = '${current_username}'`, (err,realtor_results) => {
             console.log(err, realtor_results)
          
-            res.render('realtorpanel', { 
+             res.render('realtorpanel', { 
                      name: current_username,
-                     realtors: realtor_results.rows
+                      realtor: realtor_results.rows[0] 
 			});
-			
-	
-	}); 
-			 
+	});   
 	 
  })
  
@@ -499,7 +410,7 @@ router.get('/customerpanel', (req,res) => {
          
             res.render('customerpanel', { 
                      name: current_username,
-                      customers: customer_results.rows
+                      customer: customer_results.rows[0] 
 			});
 			
 	
