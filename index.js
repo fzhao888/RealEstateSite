@@ -4,6 +4,10 @@ const bodyParser = require('body-parser');
 const port = process.env.PORT || 3000
 const router = express.Router();
 const path = require('path') 
+const pg = require('pg')
+
+//Set location for accessing files
+app.use(express.static(path.join(__dirname, 'public')));
 
 //Set the view engine for the express app  
 app.set("view engine", "jade")
@@ -21,7 +25,7 @@ app.use(bodyParser.urlencoded({ extended:true }));
 //form-urlencoded
 
 //Database
-const Pool = require('pg').Pool
+const Pool = require('pg')
 
 var connectionParams =  null;
 if (process.env.DATABASE_URL != null){
@@ -33,16 +37,24 @@ if (process.env.DATABASE_URL != null){
 
 else{
    connectionParams = {
-   	user: 'team3_user',
-   	host: 'localhost',
-  	database: 'team3',
-  	password: 'team3pass',
-  	port: 5432
+	host: 'willowrealestate.postgres.database.azure.com',
+    user: 'team5',
+    password: 'Willow5!',
+    database: 'postgres',
+    port: 5432,
+    ssl: true
   }
 }
 
 console.log(connectionParams)
-const pool = new Pool(connectionParams)
+const pool = new pg.Client(connectionParams)
+
+pool.connect(err => {
+    if (err) throw err;
+    else {
+        console.log("connection error")
+    }
+});
  
 router.get('/', function(req, res, next) {
   res.render('index', { title: 'Willow' });
@@ -185,8 +197,7 @@ router.post('/customerlogin', (req,res) => {
 
 //check user name and password with db
 	if(req.body.action && req.body.action == 'login'){
-		   
-			current_username = req.body.username;
+ 		current_username = req.body.username;
 			 pool.query(`SELECT * FROM CUSTOMER WHERE user_name = '${req.body.username}'`, (err,result) => {
 				console.log(err,result)
 				result.rows[0] 

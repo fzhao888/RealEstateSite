@@ -2,12 +2,22 @@ doctype html
    
 html
 	head 
-	title Login
+	title Willow
 	
 	body 
-		h1 Please Choose
+		img(src='thumbnail.png' style="display: block; margin-left: auto; margin-right: auto; width: 10%;")
+		h1(style="text-align:center;") Find your dream home today
+
+		p(style="text-align:center;") Please choose a login option:
 	
-		form(action="/login", method="post") 
+		form(action="/login", method="post" style="margin: auto; width: 150px;") 
+			div.actions
+				input(type = "submit", name = "action", value = "customer")
+				input(type = "submit", name = "action", value = "realtor")
+		
+		p(style="text-align:center;") Or sign up here: 
+
+		form(action="register", method="post" style="margin: auto; width: 150px;") 
 			div.actions
 				input(type = "submit", name = "action", value = "customer")
 				input(type = "submit", name = "action", value = "realtor")
