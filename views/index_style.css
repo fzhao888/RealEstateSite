@@ -67,3 +67,31 @@
 .header-right {
   float: right;
 }
+
+.header_line {
+    position: static;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 5px;
+    background-color: #1c4105;
+    color: white;
+    text-align: center;
+}
+
+/* Edit headings and paragraphs */
+
+h1{
+    font-family: Optima, sans-serif;
+    color: #9bbe5e;
+    font-size: 60px;
+}
+h2{
+    font-family: Optima, sans-serif;
+    color: #90c732;
+    font-size: 30px;
+}
+p{
+    font-family: Geneva;
+    
+}
