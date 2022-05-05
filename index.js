@@ -10,7 +10,7 @@ const pg = require('pg')
 app.use(express.static(path.join(__dirname, 'public')));
 
 //Set the view engine for the express app  
-app.set("view engine", "jade")
+app.set("view engine", "pug")
 var current_username = "";
 var current_realtorID = -1;
 var realtor = true;
@@ -47,7 +47,10 @@ else{
 
 console.log(connectionParams)
 const pool = new pg.Client(connectionParams)
+<<<<<<< Updated upstream
 
+=======
+>>>>>>> Stashed changes
  
 router.get('/', function(req, res, next) {
   res.render('index', { title: 'Willow' });
