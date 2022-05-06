@@ -6,7 +6,7 @@ html
       title Willow
       
       // stylesheet
-      link(rel='stylesheet', href='index_style.css')
+      link(href='index_style.css', rel = 'stylesheet')
       
       
     // Header
@@ -32,7 +32,7 @@ html
             input(type='submit', name='action', value='realtor')
             
         p(style='text-align:center;') Or sign up here: 
-        form(action='register', method='post', style='margin: auto; width: 150px;')
+        form(action='/register', method='post', style='margin: auto; width: 150px;')
           div.actions
             input(type='submit', name='action', value='customer')
             input(type='submit', name='action', value='realtor')
