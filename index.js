@@ -97,13 +97,12 @@ router.get('/customersignup',  (req,res) => {
 router.post('/customersignup' ,   async (req,res) => {
 	
 	
-	if( !req.body.username ){
+	if( !req.body.username || !req.body.password || !req.body.firstName || !req.body.lastName || !req.body.phoneno || !req.body.email){
 		
 		res.redirect('/customersignuperror')
 	}else{
 	 
-	  const hp = await bcrypt.hash(req.body.password, 10)  
-	  console.log(hp.length)
+	  const hp = await bcrypt.hash(req.body.password, 10)   
 	 
 	 pool.query(`INSERT INTO customer(user_name,password,first_name,last_name,phone_number,email)
 		VALUES ( '${req.body.username}', '${hp}', '${req.body.firstName}', '${req.body.lastName}', '${req.body.phoneno}', '${req.body.email}' ) `, (err, result) => {
@@ -134,16 +133,34 @@ router.get('/realtorsignup', (req,res) => {
 	
 })
 
-router.post('/realtorsignup', (req,res) => {
+router.post('/realtorsignup', async (req,res) => {
+	if( !req.body.realtorID || !req.body.username || !req.body.password || !req.body.agency || !req.body.firstName ||
+	 !req.body.lastName || !req.body.phoneno || !req.body.email)  
+	 
+	 return res.redirect('/realtorsignuperror')
+	
+	const hp = await bcrypt.hash(req.body.password, 10)
+	
 	pool.query(`INSERT INTO realtor(realtorID, user_name,password, agency, first_name,last_name,phone_number,email)
-		VALUES ( '${req.body.realtorID}' ,'${req.body.username}', '${req.body.password}', '${req.body.agency}','${req.body.firstName}', '${req.body.lastName}', '${req.body.phoneno}', '${req.body.email}' ) 
+		VALUES ( '${req.body.realtorID}' ,'${req.body.username}', '${hp}', '${req.body.agency}','${req.body.firstName}', '${req.body.lastName}', '${req.body.phoneno}', '${req.body.email}' ) 
 	 `, (err, result) => {
 		 current_realtorID = req.body.realtorID;
 		 current_username = req.body.username;
-		res.redirect('/realtorpanel')
+		res.redirect('/realtorlogin')
 		
 		} ); 
 	
+	
+})
+
+router.get('/realtorsignuperror' , (req,res) => { 
+	 res.render('realtorsignuperror')
+}) 
+
+router.post('/realtorsignuperror' , (req,res) => {
+	if( req.body.action && req.body.action == 'try again' ){ 
+		  res.redirect('/realtorsignup')
+	} 
 	
 })
 
@@ -153,7 +170,11 @@ router.get('/invalid', (req,res) => {
 })
 
 router.post('/invalid', (req,res) => { 
-	res.redirect('/')
+	if(realtor){
+		res.redirect('/realtorlogin')
+	}else{
+		res.redirect('/customerlogin')
+	}
 	
 })
  
@@ -182,7 +203,7 @@ router.get('/customerlogin', (req,res) => {
 
 router.post('/customerlogin',    (req,res) => { 
  
-		
+realtor = false
 //check user name and password with db
 	if(req.body.action && req.body.action == 'login'){
  		current_username = req.body.username;
@@ -248,6 +269,8 @@ router.get('/realtorlogin', (req,res) => {
 
 router.post('/realtorlogin', (req,res) => { 
 
+realtor = true
+
 //check user name and password with db
 	if(req.body.action && req.body.action == 'login'){
 		   
@@ -261,7 +284,7 @@ router.post('/realtorlogin', (req,res) => {
 				if(result.rows.length > 0){
 					var password = result.rows[0].password
 					
-					if(req.body.password == password){
+					if( bcrypt.compareSync(req.body.password, password) ){
 						res.redirect('/realtorpanel')
 					}else{
 						 res.redirect('/invalid') 
