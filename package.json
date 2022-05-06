@@ -19,6 +19,7 @@
   },
   "homepage": "https://github.com/hdjokic/Team3#readme",
   "dependencies": {
+    "bcrypt": "^5.0.1",
     "dotenv": "^16.0.0",
     "env": "^0.0.2",
     "express": "^4.17.3",
