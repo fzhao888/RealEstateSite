@@ -5,6 +5,7 @@ const port = process.env.PORT || 3000
 const router = express.Router();
 const path = require('path') 
 const pg = require('pg')
+const bcrypt = require('bcrypt')
 
 //Set location for accessing files
 app.use(express.static(path.join(__dirname, 'public')));
@@ -19,13 +20,12 @@ var realtor = true;
 app.use(bodyParser.json());
 app.use(express.json())
 
-const users = []
 //for parsing application/xwww-
 app.use(bodyParser.urlencoded({ extended:true }));
 //form-urlencoded
 
 //Database
-const Pool = require('pg')
+const Pool = require('pg').Pool
 
 var connectionParams =  null;
 if (process.env.DATABASE_URL != null){
@@ -37,58 +37,26 @@ if (process.env.DATABASE_URL != null){
 
 else{
    connectionParams = {
-	user: 'team3_user',
+   	user: 'team3_user',
    	host: 'localhost',
   	database: 'team3',
   	password: 'team3pass',
-  	port: 5432
+  	port: 5432 
   }
 }
 
 console.log(connectionParams)
 const pool = new pg.Client(connectionParams)
-<<<<<<< Updated upstream
 
-=======
->>>>>>> Stashed changes
+pool.connect(err => {
+    if (err) throw err; 
+});
  
 router.get('/', function(req, res, next) {
   res.render('index', { title: 'Willow' });
 });
 	
-router.get('/users', (req, res) => {
-	res.json(users)
-}) 
-
-router.post('/users' , async (req,res) => {
-	try{
-		const myPassword = await bcrypt.has(req.body.password,10);
-		const user = { name: req.body.name, password: myPassword}
-		users.push(user)
-		res.status(201).send()
-	} catch{
-		res.status(500).send()
-	}
-
-})
-
-router.post('/users/login', async(req,res) => {
-	const user = users.find(user => user.name  === req.body.name)
-	if(user == null){
-		return res.status(400).send('Cannot find user')
-		
-	}try{
-		if(await bcrypt.compare(req.body.password,user.password)){
-			res.send('Success')
-		}else{
-			res.send('Not Allowed')
-		}
-	}catch{
-		res.status(500).send()
-		
-	}
-	
-}) 
+ 
 
 router.get('/insert', (req,res) => {
 	
@@ -105,7 +73,7 @@ router.get('/insert', (req,res) => {
 })
 
 router.get('/register', (req,res) => { 
-	res.render('/register')
+	res.render('register')
 }) 
 
 router.post('/register', (req,res) => {
@@ -121,22 +89,45 @@ router.post('/register', (req,res) => {
 })
 
 
-router.get('/customersignup', (req,res) => {
+router.get('/customersignup',  (req,res) => {
 	res.render('customersignup')
 
 })
 
-router.post('/customersignup' , (req,res) => {
+router.post('/customersignup' ,   async (req,res) => {
 	
-	pool.query(`INSERT INTO customer(user_name,password,first_name,last_name,phone_number,email)
-		VALUES ( '${req.body.username}', '${req.body.password}', '${req.body.firstName}', '${req.body.lastName}', '${req.body.phoneno}', '${req.body.email}' ) 
-	 `, (err, result) => {
-		 current_username = req.body.username;
-		res.redirect('/customerpanel')
+	
+	if( !req.body.username ){
 		
-		} ); 
+		res.redirect('/customersignuperror')
+	}else{
+	 
+	  const hp = await bcrypt.hash(req.body.password, 10)  
+	  console.log(hp.length)
+	 
+	 pool.query(`INSERT INTO customer(user_name,password,first_name,last_name,phone_number,email)
+		VALUES ( '${req.body.username}', '${hp}', '${req.body.firstName}', '${req.body.lastName}', '${req.body.phoneno}', '${req.body.email}' ) `, (err, result) => {
+		 current_username = req.body.username; 
+		 
+		 res.redirect('/customerlogin')
+		 
+		 } );  
+		
+	}
 	
 })
+
+router.get('/customersignuperror' , (req,res) => {
+	res.render('customersignuperror')
+	
+})
+
+router.post('/customersignuperror', (req,res) => {
+	if( req.body.action && req.body.action == 'try again' ){ 
+		  res.redirect('/customersignup')
+	} 
+})
+	
 
 router.get('/realtorsignup', (req,res) => {
 	res.render('realtorsignup')
@@ -189,19 +180,22 @@ router.get('/customerlogin', (req,res) => {
 
 
 
-router.post('/customerlogin', (req,res) => { 
-
+router.post('/customerlogin',    (req,res) => { 
+ 
+		
 //check user name and password with db
 	if(req.body.action && req.body.action == 'login'){
  		current_username = req.body.username;
 			 pool.query(`SELECT * FROM CUSTOMER WHERE user_name = '${req.body.username}'`, (err,result) => {
-				console.log(err,result)
-				result.rows[0] 
+				console.log(err,result) 
 				
+				if(result.rows.length == 0) {
+					res.redirect('/nocustomer') 
+				}
 				if(result.rows.length > 0){
 					var password = result.rows[0].password
 					
-					if(req.body.password == password){
+					if(  bcrypt.compareSync(req.body.password, password) ){
 						res.redirect('/customerpanel')
 					}else{
 						
@@ -220,6 +214,32 @@ router.post('/customerlogin', (req,res) => {
 	
  })
 
+router.get('/nocustomer' , (req,res) => {
+	res.render('nocustomer')
+})
+
+router.post('/nocustomer' , (req,res) => {
+	if(req.body.action && req.body.action == 'try again')
+		res.redirect('/customerlogin')
+	if(req.body.action && req.body.action == 'register')
+		res.redirect('/customersignup')
+	
+	
+})
+
+router.get('/norealtor' , (req,res) => {
+	res.render('norealtor')
+})
+
+router.post('/norealtor' , (req,res) => {
+	if(req.body.action && req.body.action == 'try again')
+		res.redirect('/realtorlogin')
+	if(req.body.action && req.body.action == 'register')
+		res.redirect('/realtorsignup')
+	
+	
+})
+
 router.get('/realtorlogin', (req,res) => {
 	res.render('realtorlogin')
 	
@@ -234,7 +254,9 @@ router.post('/realtorlogin', (req,res) => {
 			current_username = req.body.username;
 			 pool.query(`SELECT * FROM realtor WHERE user_name = '${req.body.username}'`, (err,result) => {
 				console.log(err,result)
-				result.rows[0] 
+				
+				if(result.rows.length == 0)
+					res.redirect('/norealtor') 
 				
 				if(result.rows.length > 0){
 					var password = result.rows[0].password
@@ -289,21 +311,7 @@ router.post('/insert', (req, res) => {
 		
 		})
 	}
-})
-
-router.post('/users', (req, res) => {
-	const user = { name: req.body.name, password: req.body.password }
-	users.push(user)
-	res.status(201).send()
-})
-
-router.post('/users/login',(req,res) => {
-	const user = users.find(user => user.name = req.body.name)
-	if (user == null) {
-		return res.status(400).send('Cannot find user')
-	}
-})
-
+}) 
  
 router.get('/realtorpanel', (req,res) => {
 	
